@@ -22,5 +22,5 @@ Route::post('auth/login', 'Api\\AuthController@login');
 Route::group(['middleware' => ['apiJwt']], function () {
 	Route::post('auth/logout', 'Api\\AuthController@logout');
 	Route::post('/arquivo/create', 'Api\\ArquivoController@store');
-	Route::get('/arquivo', 'Api\\ArquivoController@show');
+	Route::get('/arquivo', 'Api\\ArquivoController@index');
 });

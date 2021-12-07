@@ -10,6 +10,8 @@ class ArquivoController extends Controller
 {
     public function index()
     {
+        $arquivos = Storage::disk('public')->files('files');
+        return response()->json($arquivos);
     }
 
     /**
@@ -31,11 +33,5 @@ class ArquivoController extends Controller
 
             return 'Arquivo carregado';
         }
-    }
-
-    public function show()
-    {
-        $arquivos = Storage::disk('public')->files('files');
-        return response()->json($arquivos);
     }
 }
