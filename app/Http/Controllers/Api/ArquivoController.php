@@ -28,8 +28,9 @@ class ArquivoController extends Controller
         ]);
 
         if ($request->file('file')->isValid()) {
-            $nameFile = $request->name . '.' . $request->file->extension();
-            $request->file('file')->storeAs('files', $nameFile);
+            //$nameFile = $request->name . '.' . $request->file->extension();
+            //$request->file('file')->storeAs('files', $nameFile);
+            $request->file('file')->storeAs('files', $request->name);
 
             return 'Arquivo carregado';
         }
