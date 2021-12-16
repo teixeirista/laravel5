@@ -5,7 +5,13 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Auth\Guard;
+//use Closure;
+use Tymon\JWTAuth\Facades\JWTAuth as FacadesJWTAuth;
+use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
+/**
+ * Controla as operações relacionadas a autenticação dos usuários
+ */
 class AuthController extends Controller
 {
     /**
@@ -18,7 +24,7 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Não autorizado'], 401);
         }
 
         return $this->respondWithToken($token);
@@ -41,6 +47,22 @@ class AuthController extends Controller
     }
 
     /**
+     * Verifica se o token de acesso do usuário é válido
+     */
+    public function handle(Request $request)
+    {
+        try {
+            $user = FacadesJWTAuth::parseToken()->authenticate();
+            return response()->json(['token' => 'true']);
+            //$request->merge(['user' => auth('api')->user()]);
+        } catch (\Exception $e) {
+            return response()->json(['token' => 'false']);
+        }
+        //return true;
+        //return $next($request);
+    }
+
+    /**
      * Log the user out (Invalidate the token).
      *
      * @return \Illuminate\Http\JsonResponse
@@ -49,6 +71,6 @@ class AuthController extends Controller
     {
         auth('api')->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Desconectado com sucesso!']);
     }
 }

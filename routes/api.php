@@ -13,14 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-//Route::middleware('auth:api')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
+Route::post('auth/login', 'Api\\AuthController@login'); //Rota de login
+Route::get('/auth/token', 'Api\\AuthController@handle'); //Rota de validação do token
 
-Route::post('auth/login', 'Api\\AuthController@login');
-
+//Middleware para impedir que o usuário tenha acesso a essas rotas sem estar logado
 Route::group(['middleware' => ['apiJwt']], function () {
-	Route::post('auth/logout', 'Api\\AuthController@logout');
-	Route::post('/arquivo/create', 'Api\\ArquivoController@store');
-	Route::get('/arquivo', 'Api\\ArquivoController@index');
+	Route::post('auth/logout', 'Api\\AuthController@logout'); //Rota de logout
+	Route::post('/arquivo/create', 'Api\\ArquivoController@store'); //Rota de upload de arquivos
+	Route::get('/arquivo', 'Api\\ArquivoController@index'); //Rota de listagem dos arquivos
 });
