@@ -15,11 +15,11 @@
                     </div>
                     @endif
 
-                    <ul class="list-group">
+                    <!--<ul class="list-group">
                         @foreach ($arquivos as $arquivo)
                         <li class="list-group-item">{{ str_replace('files/', '', $arquivo) }}</li>
                         @endforeach
-                    </ul>
+                    </ul>-->
 
                     <a href="{{ route('arquivos.create') }}">Cadastrar novo arquivo</a>
 
