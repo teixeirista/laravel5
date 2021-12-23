@@ -36,8 +36,8 @@ Route::get('/arquivos/{id}', function () {
     return view('arquivos');
 });
 
-Route::get('/download{file}', 'ArquivoController@download');
-Route::get('/view{id}', 'ArquivoController@view');
+Route::get('/download/{file}', 'ArquivoController@download');
+Route::get('/view/{id}', 'ArquivoController@view');
 
 /*$this->get('/test-conn', function () {
     // Insere um novo usuário ao banco de dados:

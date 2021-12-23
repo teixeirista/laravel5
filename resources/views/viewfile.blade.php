@@ -10,9 +10,11 @@
 
 <body>
 	{{ $data->name }}
+	<br>
 	{{ $data->description }}
+	<br>
 
-	<iframe src="/assets/{{ $data->file }}" frameborder="0"></iframe>
+	<iframe height="400" width="400" src="/assets/{{ $data->file }}" frameborder="0"></iframe>
 </body>
 
 </html>

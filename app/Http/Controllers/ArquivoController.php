@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Stroage;
 use App\Models\File;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Controla as operações relacionadas aos arquivos carregados pelo usuário
@@ -53,9 +53,9 @@ class ArquivoController extends Controller
 			$data->description = $request->description;
 			$data->file = $filename;
 			//Salva o nome do arquivo junto com a extensão
-			$nameFile = $request->name . '.' . $request->file->extension();
+			//$nameFile = $request->name . '.' . $request->file->extension();
 			//Armazena o arquivo na pasta storage/public
-			//$request->file('file')->storeAs('files', $nameFile);
+			//$request->file('file')->storeAs('files', $filename);
 			$request->file->move('assets', $filename);
 
 			$data->save();
@@ -78,12 +78,14 @@ class ArquivoController extends Controller
 
 	public function download(Request $request, $file)
 	{
+		//return response(Storage::download($file));
 		return response()->download(public_path('assets/' . $file));
 	}
 
 	public function view($id)
 	{
 		$data = File::find($id);
+		//$data->description = Storage::url($data->file);
 		return view('viewfile', compact('data'));
 	}
 
