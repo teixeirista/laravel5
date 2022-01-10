@@ -5,6 +5,16 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
 
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        @if(session('msg'))
+                        <p class="msg">{{ session('msg') }}</p>
+                        @endif
+                    </div>
+                </div>
+            </main>
+
             <div class="panel panel-default">
                 <div class="panel-heading">Lista de Arquivos</div>
 
@@ -15,11 +25,28 @@
                     </div>
                     @endif
 
-                    <!--<ul class="list-group">
-                        @foreach ($arquivos as $arquivo)
-                        <li class="list-group-item">{{ str_replace('files/', '', $arquivo) }}</li>
+                    <table border="1px">
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Arquivo</th>
+                            <th>Visualizar</th>
+                            <th>Baixar</th>
+                        </tr>
+
+                        @foreach ($data as $data)
+                        <tr>
+                            <td>{{ $data->name }}</td>
+                            <td>{{ $data->description }}</td>
+                            <td>{{ $data->file }}</td>
+                            <td><a href="{{ url('/view', $data->id) }}">Ver</a></td>
+                            <td><a href="{{ url('/download', $data->file) }}">Baixar</a></td>
+                        </tr>
+
                         @endforeach
-                    </ul>-->
+
+                    </table>
+
 
                     <a href="{{ route('arquivos.create') }}">Cadastrar novo arquivo</a>
 

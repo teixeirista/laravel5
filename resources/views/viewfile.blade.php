@@ -14,7 +14,7 @@
 	{{ $data->description }}
 	<br>
 
-	<iframe height="400" width="400" src="/assets/{{ $data->file }}" frameborder="0"></iframe>
+	<iframe height="500" width="900" src="/storage/files/{{ $data->file }}" frameborder="0"></iframe>
 </body>
 
 </html>

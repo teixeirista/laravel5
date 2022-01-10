@@ -55,12 +55,12 @@ class ArquivoController extends Controller
 			//Salva o nome do arquivo junto com a extensão
 			//$nameFile = $request->name . '.' . $request->file->extension();
 			//Armazena o arquivo na pasta storage/public
-			//$request->file('file')->storeAs('files', $filename);
-			$request->file->move('assets', $filename);
+			$request->file('file')->storeAs('files', $filename);
+			//$request->file->move('assets', $filename);
 
 			$data->save();
 
-			return "Arquivo carregado"; //Retorna a mensagem de confirmação de upload
+			return redirect('/show')->with('msg', 'Arquivo carregado'); //Retorna a mensagem de confirmação de upload
 		}
 	}
 
@@ -73,13 +73,14 @@ class ArquivoController extends Controller
 	public function show()
 	{
 		$data = File::all();
-		return view('showfiles', compact('data'));
+		//return view('showfiles', compact('data'));
+		return view('home', compact('data'));
 	}
 
 	public function download(Request $request, $file)
 	{
-		//return response(Storage::download($file));
-		return response()->download(public_path('assets/' . $file));
+		return response(Storage::download($file));
+		//return response()->download(public_path('assets/' . $file));
 	}
 
 	public function view($id)
