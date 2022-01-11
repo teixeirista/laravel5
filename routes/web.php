@@ -20,9 +20,9 @@ Route::post('/arquivo/store', 'ArquivoController@store');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/show', 'ArquivoController@show');
+Route::get('/home', 'ArquivoController@show')->name('home');
 
 Route::get('/arquivos', function () {
     return view('arquivos');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\File;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -14,7 +15,12 @@ class ArquivoController extends Controller
     public function index()
     {
         $arquivos = Storage::disk('public')->files('files');
-        return response()->json($arquivos);
+
+        $data = File::all();
+
+        return response()->json($data);
+
+        //return response()->compact($data);
     }
 
     /**
@@ -30,11 +36,36 @@ class ArquivoController extends Controller
             'file' => 'required'
         ]);
 
-        if ($request->file('file')->isValid()) {
+        /*if ($request->file('file')->isValid()) {
+            $filename = time() . '.' . $request->file->extension();
             //Armazena o arquivo na pasta storage/public
-            $request->file('file')->storeAs('files', $request->name);
+            $request->file('file')->storeAs('files', $filename);
 
             return 'Arquivo carregado'; //Retorna a mensagem de confirmação de upload
+        }*/
+
+        $data = new File();
+
+        if ($request->file('file')->isValid()) {
+            $filename = time() . '.' . $request->file->extension();
+            $data->name = $request->name;
+            $data->description = $request->description;
+            $data->file = $filename;
+
+            //Armazena o arquivo na pasta storage/public
+            $request->file('file')->storeAs('files', $filename);
+
+            $data->save();
+
+            return 'Arquivo carregado'; //Retorna a mensagem de confirmação de upload
+
+            //return redirect('/home')->with('msg', 'Arquivo carregado');
         }
+    }
+
+    public function show($id)
+    {
+        $data = File::find($id); //Encontra o arquivo no banco de dados a partir do id
+        return response()->json($data);
     }
 }
