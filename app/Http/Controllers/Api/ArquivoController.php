@@ -47,7 +47,10 @@ class ArquivoController extends Controller
         $data = new File();
 
         if ($request->file('file')->isValid()) {
+            //Salva o nome do arquivo como a hora em que ele foi upado junto com a extensão
             $filename = time() . '.' . $request->file->extension();
+
+            //Adiciona os atributos do arquivo na variável que será salva no banco
             $data->name = $request->name;
             $data->description = $request->description;
             $data->file = $filename;
@@ -55,12 +58,16 @@ class ArquivoController extends Controller
             //Armazena o arquivo na pasta storage/public
             $request->file('file')->storeAs('files', $filename);
 
+            //Salva o arquivo no banco de dados
             $data->save();
 
-            return 'Arquivo carregado'; //Retorna a mensagem de confirmação de upload
+            //Retorna a mensagem de confirmação de upload
+            return 'Arquivo carregado';
 
             //return redirect('/home')->with('msg', 'Arquivo carregado');
         }
+
+        return 'O arquivo não pode ser carregado';
     }
 
     public function show($id)
