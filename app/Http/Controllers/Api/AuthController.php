@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Contracts\Auth\Guard;
 //use Closure;
 use Tymon\JWTAuth\Facades\JWTAuth as FacadesJWTAuth;

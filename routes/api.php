@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::post('auth/login', 'Api\\AuthController@login'); //Rota de login
+//Route::post('auth/create', 'Api\\AuthController@register'); //Rota de cadastro de usuário
 Route::get('/auth/token', 'Api\\AuthController@handle'); //Rota de validação do token
 
 //Middleware para impedir que o usuário tenha acesso a essas rotas sem estar logado

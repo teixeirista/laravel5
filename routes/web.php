@@ -15,29 +15,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Auth::routes();
+
+//Middleware para impedir que o usuário tenha acesso a essas rotas sem estar logado
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/home', 'ArquivoController@show');
+
+    Route::get('/arquivos', function () {
+        return view('arquivos');
+    })->name('arquivos.create');
+
+    Route::get('/download/{file}', 'ArquivoController@download');
+    Route::get('/view/{id}', 'ArquivoController@view');
+});
+
 //Route::get('/', 'HomeController@index');
 Route::post('/arquivo/store', 'ArquivoController@store');
 
-Auth::routes();
 
-//Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('/home', 'ArquivoController@show')->name('home');
-
-Route::get('/arquivos', function () {
-    return view('arquivos');
-})->name('arquivos.create');
-
-Route::get('/index', function () {
-    return view('index');
-});
-
-Route::get('/arquivos/{id}', function () {
-    return view('arquivos');
-});
-
-Route::get('/download/{file}', 'ArquivoController@download');
-Route::get('/view/{id}', 'ArquivoController@view');
 
 /*$this->get('/test-conn', function () {
     // Insere um novo usuário ao banco de dados:
