@@ -21,6 +21,8 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', 'ArquivoController@show');
 
+    Route::post('/file/create', 'ArquivoController@store');
+
     Route::get('/arquivos', function () {
         return view('arquivos');
     })->name('arquivos.create');

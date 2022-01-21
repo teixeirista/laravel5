@@ -42,6 +42,7 @@ class ArquivoController extends Controller
 
 		$request->validate([ //Valida as informçaões do formulário de envio de arquivos
 			'name' => 'required|min:3|max:255',
+			'description' => '',
 			'file' => 'required'
 		]);
 

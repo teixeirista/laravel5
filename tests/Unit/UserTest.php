@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class UserTest extends TestCase
 {
     /** @test  */
-    public function check_if_user_columns_is_correct()
+    /*public function check_if_user_columns_is_correct()
     {
         $user = new User;
 
@@ -21,5 +21,5 @@ class UserTest extends TestCase
         $arrayCompared = array_diff($expected, $user->getFillable());
 
         $this->assertEquals(0, count($arrayCompared));
-    }
+    }*/
 }
