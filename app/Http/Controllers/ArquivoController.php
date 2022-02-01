@@ -52,6 +52,7 @@ class ArquivoController extends Controller
 			//Salva o nome do arquivo como a hora em que ele foi upado junto com a extensão
 			$filename = time() . '.' . $request->file->extension();
 
+
 			//Adiciona os atributos do arquivo na variável que será salva no banco
 			$data->name = $request->name;
 			$data->description = $request->description;
@@ -79,6 +80,7 @@ class ArquivoController extends Controller
 		$data = File::all();
 		//return view('showfiles', compact('data'));
 		return view('home', compact('data'));
+		//return response()->json($data);
 	}
 
 	public function download(Request $request, $file)
@@ -90,8 +92,14 @@ class ArquivoController extends Controller
 	public function view($id)
 	{
 		$data = File::find($id);
-		//$data->description = Storage::url($data->file);
-		return view('viewfile', compact('data'));
+
+		//dd($data);
+
+		if ($data != null) {
+			return $data->toJson();
+			//return view('viewfile', compact('data'));
+		}
+		return "Arquivo não encontrado";
 	}
 
 

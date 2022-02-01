@@ -9,28 +9,36 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LoginTest extends TestCase
 {
-    use RefreshDatabase; //Recarrega o banco de dados toda vez que executa um teste
+    //Recarrega o banco de dados toda vez que executa um teste
+    use RefreshDatabase;
 
     //Testa se um usuário consegue ver a tela de login
     /** @test */
     public function user_can_view_login_form()
     {
-        $response = $this->get('/login'); //Faz uma requisição para a tela de login e salva a resposta
+        //Faz uma requisição para a tela de login e salva a resposta
+        $response = $this->get('/login');
 
-        $response->assertSuccessful(); //Testa se a página carregou com sucesso
-        $response->assertViewIs('auth.login'); //Testa se a tela é a correta
-        $this->assertGuest(); //Teste se o usuário não está autenticado
+        //Testa se a página carregou com sucesso
+        $response->assertSuccessful();
+        //Testa se a tela é a correta
+        $response->assertViewIs('auth.login');
+        //Testa se o usuário não está autenticado
+        $this->assertGuest();
     }
 
     //Testa se um usuário não consegue visualizar a tela de login se já estiver autenticado
     /** @test */
     public function user_cannot_view_login_form_when_authenticated()
     {
-        $user = factory(User::class)->make(); //Cria um usuário falso para usar no teste
+        //Cria um usuário para usar no teste
+        $user = factory(User::class)->make();
 
-        $response = $this->actingAs($user)->get('/login'); //Tenta realizar um login utilizando o usuário criado
+        //Tenta realizar um login utilizando o usuário criado
+        $response = $this->actingAs($user)->get('/login');
 
-        $response->assertRedirect('/home'); //Testa se o usuário foi redirecionado para a home, ou seja, logou
+        //Testa se o usuário foi redirecionado para a home, ou seja, logou
+        $response->assertRedirect('/home');
     }
 
     //Testa se um usuário não consegue visualizar a lista de arquivos caso não esteja autenticado
@@ -128,31 +136,49 @@ class LoginTest extends TestCase
     /** @test */
     public function user_can_logout()
     {
-        $this->be(factory(User::class)->create()); //Cria um novo usuário
+        //Cria um usuário
+        $user = factory(User::class)->make();
 
-        $response = $this->post('/logout'); //Tenta deslogar e salva a resposta
+        //Realiza o login utilizando o usuário criado
+        $response = $this->actingAs($user)->get('/login');
 
-        $response->assertRedirect('/'); //Testa se foi redirecionado para a tela welcome
-        $this->assertGuest(); //Testa se o usuário não foi autenticado e continua como convidado
+        //Verifica se o usuário está autenticado
+        $this->assertAuthenticated();
+
+        //Realiza o logout
+        $response = $this->post('/logout');
+
+        //Testa se foi redirecionado para a tela welcome
+        $response->assertRedirect('/');
+        //Testa se o usuário não está mais autenticado
+        $this->assertGuest();
     }
 
-    //Testa se um token se torna inválido após o logout
+    //Testa se um usuário não consegue acessar a lista de arquivos depois de deslogar
     /** @test */
-    public function token_is_invalid_after_logout()
+    public function user_has_no_access_after_logout()
     {
-        $user = factory(User::class)->create([ //Cria um novo usuário e o salva no banco de dados
-            'email' => ' ', //Salva um e-mail vazio para o usuário
-            'password' => bcrypt('i-love-laravel'), //Salva uma senha para o usuário
-        ]);
+        //Cria um usuário
+        $user = factory(User::class)->make();
 
-        //Tenta realizar o login com as informações do usuário recém-criado
-        $response = $this->from('/login')->post('/login', [
-            'email' => $user->email,
-            'password' => $user->password,
-        ]);
+        //Realiza o login utilizando o usuário criado
+        $response = $this->actingAs($user)->get('/login');
 
-        $this->post('/logout'); //Tenta deslogar e salva a resposta
+        //Verifica se o usuário está autenticado
+        $this->assertAuthenticated();
 
-        $this->assertGuest(); //Testa se o usuário não foi autenticado e continua como convidado
+        //Realiza o logout
+        $response = $this->actingAs($user)->post('/logout');
+
+        //Testa se foi redirecionado para a tela welcome
+        $response->assertRedirect('/');
+        //Testa se o usuário não está mais autenticado
+        $this->assertGuest();
+
+        //Tenta ver a lista de arquivos
+        $response = $this->get('/home');
+
+        //Verifica se foi redirecionado para a página de login
+        $response->assertRedirect('/login');
     }
 }
