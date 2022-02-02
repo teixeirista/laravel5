@@ -9,8 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LoginTest extends TestCase
 {
-    //Recarrega o banco de dados toda vez que executa um teste
-    use RefreshDatabase;
+    use RefreshDatabase; //Recarrega o banco de dados toda vez que executa um teste
 
     //Testa se um usuário consegue ver a tela de login
     /** @test */

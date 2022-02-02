@@ -50,7 +50,8 @@ class ArquivoController extends Controller
 
 		if ($request->file('file')->isValid()) {
 			//Salva o nome do arquivo como a hora em que ele foi upado junto com a extensão
-			$filename = time() . '.' . $request->file->extension();
+			//$filename = time() . '.' . $request->file->extension();
+			$filename = $request->name . '.' . $request->file->extension();
 
 
 			//Adiciona os atributos do arquivo na variável que será salva no banco
@@ -65,7 +66,8 @@ class ArquivoController extends Controller
 			$data->save();
 
 			//Retorna a mensagem de confirmação de upload
-			return redirect('/home')->with('msg', 'Arquivo carregado');
+			//return redirect('/home')->with('msg', 'Arquivo carregado');
+			return "Arquivo carregado";
 		}
 	}
 
@@ -99,7 +101,8 @@ class ArquivoController extends Controller
 			return $data->toJson();
 			//return view('viewfile', compact('data'));
 		}
-		return "Arquivo não encontrado";
+
+		return ['msg' => "Arquivo não encontrado"];
 	}
 
 

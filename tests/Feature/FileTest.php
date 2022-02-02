@@ -13,7 +13,7 @@ use App\User;
 
 class FileTest extends TestCase
 {
-    //use RefreshDatabase; //Recarrega o banco de dados toda vez que executa um teste
+    use RefreshDatabase; //Recarrega o banco de dados toda vez que executa um teste
     //use WithoutMiddleware;
 
     /** @test */
@@ -49,25 +49,26 @@ class FileTest extends TestCase
 
         //dd($response);
 
-        //Verifica se o arquivo está inserido no storage
-        //Storage::disk('local')->assertExists('files/' . 'missing.jpg');
-        Storage::disk('public')->assertExists('/files/' . '1643744720.txt');
+        //Verifica se um arquivo está no storage
+        //Storage::disk('public')->assertExists('/files/' . '1643744720.txt');
         //Storage::disk('public')->assertExists('1643292505.pdf');
 
+        $response->assertSuccessful();
         // Assert a file does not exist...
-        Storage::disk('public')->assertMissing('missing.jpg');
+        //Storage::disk('public')->assertMissing('/files/' . 'missing.jpg');
     }
 
     /** @test */
     public function a_name_is_required()
     {
-        //Cria um arquivo utilizando o Faker
-        $fileUpload = UploadedFile::fake()->create('file.pdf');
+
+        //Cria um usuário
+        $user = factory(User::class)->make();
+        $this->actingAs($user);
 
         //Cria uma instância do model File com o nome inválido
-        $file = factory(File::class)->create([
-            'name' => '',
-            'file' => $fileUpload
+        $file = factory(File::class)->make([
+            'name' => ''
         ]);
 
         //Tenta salvar o arquivo no banco de dados
@@ -81,12 +82,19 @@ class FileTest extends TestCase
     public function a_file_is_required()
     {
 
-        $file = factory(File::class)->create([
+        //Cria um usuário
+        $user = factory(User::class)->make();
+        $this->actingAs($user);
+
+        //Cria um arquivo sem o campo arquivo
+        $file = factory(File::class)->make([
             'file' => ''
         ]);
 
+        //Faz o upload do arquivo
         $response = $this->post('/file/create', $file->toArray());
 
+        //Testa se houve erro por causa da falta do arquivo
         $response->assertSessionHasErrors('file', $format = null, $errorBag = 'default');
     }
 
@@ -96,29 +104,40 @@ class FileTest extends TestCase
 
         //$this->withoutExceptionHandling();
 
-        $user = factory(User::class)->make();
+        $user = factory(User::class)->create();
         $this->actingAs($user);
 
-        $fileUpload = UploadedFile::fake()->create('file.pdf');
+        $this->assertAuthenticated();
 
         //Cria uma instância do model File com o nome inválido
         $file = factory(File::class)->make([
-            'name' => 'Arquivo',
-            'file' => $fileUpload
+            'name' => 'arquivo',
+            'description' => '1 2 testando, 1 2',
+            'file' => UploadedFile::fake()->create('file.txt')
         ]);
 
-        $response = $this->post('/file/create', $file->toArray());
+        $this->post('/file/create', $file->toArray());
 
-        $content = $this->actingAs($user)->get('/view/1')->decodeResponseJson();
+        //$response->assertSuccessful();
 
+        //$id = File::find($file);
+
+        //dd(File::count());
+
+        $content = $this->get('/view/2')->decodeResponseJson();
+
+        //Exclui os itens inerentes à data e hora da criação do arquivo, para facilitar o teste
+        $content = array_splice($content, 0, 4);
+
+        //dd($content);
+
+        //Teste se o JSON recebido é igual ao definido abaixo
         $this->assertEquals(
             [
-                "id" => 1,
-                "name" => "texto",
-                "description" => "arquivo de texto",
-                "file" => "1643737177.txt",
-                "created_at" => "2022-02-01 14:39:37",
-                "updated_at" => "2022-02-01 14:39:37"
+                "id" => 2,
+                "name" => "arquivo",
+                "description" => "1 2 testando, 1 2",
+                "file" => "arquivo.txt",
             ],
             $content
         );
@@ -127,32 +146,52 @@ class FileTest extends TestCase
     /** @test */
     public function check_if_file_exists_in_database()
     {
-        //Storage::fake('public');
-
-        //$user = User::factory()->create();
         $user = factory(User::class)->make();
         $this->actingAs($user);
 
-        $file = factory(File::class)->create([
+        $file = factory(File::class)->make([
             'name' => 'Arquivo',
-            'file' => UploadedFile::fake()->create('file.pdf')
         ]);
 
         $this->post('/file/create', $file->toArray());
-
-        /*$this->post('/file/create', [
-            'name' => 'Arquivo',
-            'file' => $file
-        ]);*/
 
         $arquivo = File::first();
         $this->assertNotNull($arquivo->file);
         $this->assertEquals('Arquivo', $arquivo->name);
 
-        //Storage::disk('files')->assertExists($arquivo->file);
-
         $this->assertDatabaseHas('files', ['name' => 'Arquivo']);
+    }
 
-        //$this->assertFileEquals($file, Storage::disk('files')->path($arquivo->file));
+    /** @test */
+    public function check_if_file_exists_in_storage()
+    {
+        //Cria um usuário
+        $user = factory(User::class)->make();
+        $this->actingAs($user);
+
+        //Cria um arquivo
+        $file = factory(File::class)->make([
+            'name' => 'arquivo de teste',
+            'description' => 'arquivo gerado pelo teste do site',
+        ]);
+
+        //Faz o upload do arquivo
+        $this->post('/file/create', $file->toArray());
+
+        //Testa se o arquivo criado está no storage
+        Storage::disk('public')->assertExists('/files/' . 'arquivo de teste.pdf');
+    }
+
+    /** @test */
+    public function count_files()
+    {
+        //$user = factory(User::class)->make();
+        //$this->actingAs($user);
+
+        for ($i = 1; $i <= 10; $i++) {
+            factory(File::class)->create();
+        }
+
+        $this->assertEquals(10, File::count());
     }
 }
