@@ -20,7 +20,7 @@ Route::get('/auth/token', 'Api\\AuthController@handle'); //Rota de validação d
 //Middleware para impedir que o usuário tenha acesso a essas rotas sem estar logado
 Route::group(['middleware' => ['apiJwt']], function () {
 	Route::post('auth/logout', 'Api\\AuthController@logout'); //Rota de logout
-	Route::post('/file/create', 'Api\\ArquivoController@store'); //Rota de upload de arquivos
-	Route::get('/files', 'Api\\ArquivoController@index'); //Rota de listagem dos arquivos
-	Route::get('/file/{id}', 'Api\\ArquivoController@show'); //Rota de visualização de arquivos
+	Route::post('/file/create', 'Api\\FileController@store'); //Rota de upload de arquivos
+	Route::get('/files', 'Api\\FileController@index'); //Rota de listagem dos arquivos
+	Route::get('/file/{id}', 'Api\\FileController@show'); //Rota de visualização de arquivos
 });

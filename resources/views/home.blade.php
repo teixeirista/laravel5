@@ -48,7 +48,7 @@
                     </table>
 
 
-                    <a href="{{ route('arquivos.create') }}">Cadastrar novo arquivo</a>
+                    <a href="{{ route('files') }}">Cadastrar novo arquivo</a>
 
                     <!--Você está logado!-->
 

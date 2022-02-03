@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 /**
  * Controla as operações relacionadas aos arquivos carregados pelo usuário
  */
-class ArquivoController extends Controller
+class FileController extends Controller
 {
 	/**
 	 * Display a listing of the resource.
@@ -39,7 +39,6 @@ class ArquivoController extends Controller
 	 */
 	public function store(Request $request)
 	{
-
 		$request->validate([ //Valida as informçaões do formulário de envio de arquivos
 			'name' => 'required|min:3|max:255',
 			'description' => '',
@@ -80,9 +79,8 @@ class ArquivoController extends Controller
 	public function show()
 	{
 		$data = File::all();
-		//return view('showfiles', compact('data'));
-		return view('home', compact('data'));
-		//return response()->json($data);
+		//return view('home', compact('data'));
+		return $data->toJson();
 	}
 
 	public function download(Request $request, $file)
@@ -98,8 +96,8 @@ class ArquivoController extends Controller
 		//dd($data);
 
 		if ($data != null) {
-			return $data->toJson();
 			//return view('viewfile', compact('data'));
+			return $data->toJson();
 		}
 
 		return ['msg' => "Arquivo não encontrado"];

@@ -25,43 +25,67 @@ class FileTest extends TestCase
     }*/
 
     /** @test */
-    public function a_file_can_be_uploaded()
+    public function check_if_correct_information_about_file_is_received()
     {
-
-        $this->withoutExceptionHandling();
-
         //Cria um usuário
         $user = factory(User::class)->make();
         $this->actingAs($user);
 
-        //Cria um arquivo
-        //$fileUpload = UploadedFile::fake()->create('file.pdf');
-
+        //Cria um arquivo utilizando o factory
         $file = factory(File::class)->make([
-            'name' => 'Arquivo de Teste',
+            'name' => 'arquivo',
+            'description' => '1 2 testando, 1 2',
+            'file' => UploadedFile::fake()->create('file.txt')
+        ]);
+
+        //Faz upload do arquivo
+        $this->post('/file/create', $file->toArray());
+
+        //Recece as informações do arquivo através da rota de visualização de arquivos
+        $content = $this->get('/view/1')->decodeResponseJson();
+
+        //Exclui os itens inerentes à data e hora da criação do arquivo, para facilitar o teste
+        $content = array_splice($content, 0, 4);
+
+        //Testa se o JSON recebido é igual ao definido abaixo
+        $this->assertEquals(
+            [
+                "id" => 1,
+                "name" => "arquivo",
+                "description" => "1 2 testando, 1 2",
+                "file" => "arquivo.txt",
+            ],
+            $content
+        );
+    }
+
+    /** @test */
+    public function a_file_can_be_uploaded()
+    {
+        //Cria um usuário
+        $user = factory(User::class)->make();
+        $this->actingAs($user);
+
+        //Cria um arquivo utilizando o factory
+        $file = factory(File::class)->make([
+            'name' => 'teste de upload',
             'description' => 'Arquivo gerado pelo teste do site',
-            'file' => UploadedFile::fake()->create('file.pdf'), //Salva um e-mail vazio para o usuário
+            'file' => UploadedFile::fake()->create('file.pdf')
         ]);
 
         //Faz o upload do arquivo
-        //$response = $this->actingAs($user)->post('/file/create', $file->toArray());
         $response = $this->post('/file/create', $file->toArray());
 
-        //dd($response);
+        //Verifica se o arquivo está no banco de dados
+        $this->assertDatabaseHas('files', ['name' => 'teste de upload']);
 
-        //Verifica se um arquivo está no storage
-        //Storage::disk('public')->assertExists('/files/' . '1643744720.txt');
-        //Storage::disk('public')->assertExists('1643292505.pdf');
-
-        $response->assertSuccessful();
-        // Assert a file does not exist...
-        //Storage::disk('public')->assertMissing('/files/' . 'missing.jpg');
+        //Verifica se o arquivo está no storage
+        Storage::disk('public')->assertExists('/files/' . 'teste de upload.pdf');
     }
 
     /** @test */
     public function a_name_is_required()
     {
-
         //Cria um usuário
         $user = factory(User::class)->make();
         $this->actingAs($user);
@@ -81,7 +105,6 @@ class FileTest extends TestCase
     /** @test */
     public function a_file_is_required()
     {
-
         //Cria um usuário
         $user = factory(User::class)->make();
         $this->actingAs($user);
@@ -99,66 +122,21 @@ class FileTest extends TestCase
     }
 
     /** @test */
-    public function check_if_correct_information_about_file_is_received()
-    {
-
-        //$this->withoutExceptionHandling();
-
-        $user = factory(User::class)->create();
-        $this->actingAs($user);
-
-        $this->assertAuthenticated();
-
-        //Cria uma instância do model File com o nome inválido
-        $file = factory(File::class)->make([
-            'name' => 'arquivo',
-            'description' => '1 2 testando, 1 2',
-            'file' => UploadedFile::fake()->create('file.txt')
-        ]);
-
-        $this->post('/file/create', $file->toArray());
-
-        //$response->assertSuccessful();
-
-        //$id = File::find($file);
-
-        //dd(File::count());
-
-        $content = $this->get('/view/2')->decodeResponseJson();
-
-        //Exclui os itens inerentes à data e hora da criação do arquivo, para facilitar o teste
-        $content = array_splice($content, 0, 4);
-
-        //dd($content);
-
-        //Teste se o JSON recebido é igual ao definido abaixo
-        $this->assertEquals(
-            [
-                "id" => 2,
-                "name" => "arquivo",
-                "description" => "1 2 testando, 1 2",
-                "file" => "arquivo.txt",
-            ],
-            $content
-        );
-    }
-
-    /** @test */
     public function check_if_file_exists_in_database()
     {
+        //Cria um usuário
         $user = factory(User::class)->make();
         $this->actingAs($user);
 
+        //Cria um arquivo com nome específico
         $file = factory(File::class)->make([
             'name' => 'Arquivo',
         ]);
 
+        //Faz upload do arquivo
         $this->post('/file/create', $file->toArray());
 
-        $arquivo = File::first();
-        $this->assertNotNull($arquivo->file);
-        $this->assertEquals('Arquivo', $arquivo->name);
-
+        //Verifica se o arquivo existe no banco de dados
         $this->assertDatabaseHas('files', ['name' => 'Arquivo']);
     }
 
@@ -185,13 +163,27 @@ class FileTest extends TestCase
     /** @test */
     public function count_files()
     {
-        //$user = factory(User::class)->make();
-        //$this->actingAs($user);
+        //Cria dez arquivos e salva no banco de dados
+        for ($i = 1; $i <= 10; $i++) {
+            factory(File::class)->create();
+        }
+
+        //Verifica se a quantidade de arquivos no banco é a esperada
+        $this->assertEquals(10, File::count());
+    }
+
+
+    public function return_all_files()
+    {
+        $user = factory(User::class)->make();
+        $this->actingAs($user);
 
         for ($i = 1; $i <= 10; $i++) {
             factory(File::class)->create();
         }
 
-        $this->assertEquals(10, File::count());
+        $response = $this->get('/home')->decodeResponseJson();
+
+        //dd($response);
     }
 }

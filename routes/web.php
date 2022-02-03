@@ -19,20 +19,20 @@ Auth::routes();
 
 //Middleware para impedir que o usuário tenha acesso a essas rotas sem estar logado
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('/home', 'ArquivoController@show');
+    Route::get('/home', 'FileController@show');
 
-    Route::post('/file/create', 'ArquivoController@store');
+    Route::post('/file/create', 'FileController@store');
 
-    Route::get('/arquivos', function () {
-        return view('arquivos');
-    })->name('arquivos.create');
+    Route::get('/files', function () {
+        return view('files');
+    })->name('files');
 
-    Route::get('/download/{file}', 'ArquivoController@download');
-    Route::get('/view/{id}', 'ArquivoController@view');
+    Route::get('/download/{file}', 'FileController@download');
+    Route::get('/view/{id}', 'FileController@view');
 });
 
 //Route::get('/', 'HomeController@index');
-Route::post('/arquivo/store', 'ArquivoController@store');
+//Route::post('/file/store', 'FileController@store');
 
 
 

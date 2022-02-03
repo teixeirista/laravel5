@@ -15,7 +15,7 @@
 					</div>
 					@endif
 
-					<form action="/arquivo/store" method="post" enctype="multipart/form-data">
+					<form action="/file/create" method="post" enctype="multipart/form-data">
 						{{ csrf_field() }}
 						<input type="text" name="name" placeholder="Nome">
 						<input type="text" name="description" placeholder="Descrição">

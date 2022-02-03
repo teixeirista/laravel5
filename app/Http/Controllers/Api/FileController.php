@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 /**
  * Controla as operações relacionadas aos arquivos carregados pelo usuário
  */
-class ArquivoController extends Controller
+class FileController extends Controller
 {
     public function index()
     {
