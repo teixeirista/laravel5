@@ -32,6 +32,22 @@ class AuthController extends Controller
     }
 
     /**
+     * Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request)
+    {
+        $credentials = $request->only(['name', 'email', 'password']);
+
+        return User::create([
+            'name' => $credentials['name'],
+            'email' => $credentials['email'],
+            'password' => bcrypt($credentials['password'])
+        ]);
+    }
+
+    /**
      * Get the token array structure.
      *
      * @param  string $token

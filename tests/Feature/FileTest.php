@@ -17,14 +17,6 @@ class FileTest extends TestCase
     //use WithoutMiddleware;
 
     /** @test */
-    /*public function a_test()
-    {
-        $response = $this->get('/login');
-
-        $response->assertSuccessful();
-    }*/
-
-    /** @test */
     public function check_if_correct_information_about_file_is_received()
     {
         //Cria um usuário
@@ -172,7 +164,7 @@ class FileTest extends TestCase
         $this->assertEquals(10, File::count());
     }
 
-
+    /** @test */
     public function return_all_files()
     {
         $user = factory(User::class)->make();
@@ -184,6 +176,6 @@ class FileTest extends TestCase
 
         $response = $this->get('/home')->decodeResponseJson();
 
-        //dd($response);
+        dd($response);
     }
 }
