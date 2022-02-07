@@ -174,8 +174,8 @@ class FileTest extends TestCase
             factory(File::class)->create();
         }
 
-        $response = $this->get('/home')->decodeResponseJson();
+        $response = $this->get('/home');
 
-        dd($response);
+        $response->assertStatus(200);
     }
 }
